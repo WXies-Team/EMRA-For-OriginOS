@@ -1,4 +1,4 @@
-name: EMRA-For-HyperOS
+name: EMRA-For-OriginOS
 
 on:
   workflow_dispatch:
