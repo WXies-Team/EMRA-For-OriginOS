@@ -1,11 +1,16 @@
-name: Analyze & Push
+name: EMRA For OriginOS
 
 on:
   workflow_dispatch:
     inputs:
       device:
-        description: '设备类型 p/ph/f'
+        description: "设备类型"
         required: true
+        type: choice
+        options:
+        - Phone
+        - Pad
+        - Fold
       link:
         description: 'ROM 链接'
         required: true
@@ -36,14 +41,27 @@ jobs:
     
     - name: Install dependence
       run: |
-        sudo apt-get install -y android-sdk-build-tools
-        pip install pyaxmlparser
-        wget -O erofs-utils.zip https://github.com/sekaiacg/erofs-utils/releases/download/v1.7.1-231221/erofs-utils-v1.7.1-g64fa6832-Linux_x86_64-2312211134.zip
-        unzip erofs-utils.zip
-        rm erofs-utils.zip
-        wget -O payload-dumper-go.tar.gz https://github.com/ssut/payload-dumper-go/releases/download/1.2.2/payload-dumper-go_1.2.2_linux_amd64.tar.gz
-        tar -xvf payload-dumper-go.tar.gz
-        rm payload-dumper-go.tar.gz
+        pip install -r requirements.txt
+
+    - name: Download extract.erofs
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: "sekaiacg/erofs-utils"
+        latest: true
+        extract: true
+        fileName: 'erofs-utils-*-Linux_x86_64-*.zip'
+
+    - name: Download payload-dumper-go
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: "ssut/payload-dumper-go"
+        latest: true
+        extract: true
+        fileName: 'payload-dumper-go_*_linux_amd64.tar.gz'
+
+    - name: Remove file
+      run: |
+       rm *.tar.gz *.zip
 
     - name: Download ROM
       run: |
@@ -51,7 +69,16 @@ jobs:
 
     - name: Switch device type
       run: |
-        python main.py -t 0 ${{ github.event.inputs.device }}
+        if [ "${{ github.event.inputs.device }}" = "Phone" ]; then
+            python main.py -t 0 ph
+          elif [ "${{ github.event.inputs.device }}" = "Pad" ]; then
+            python main.py -t 0 p
+          elif [ "${{ github.event.inputs.device }}" = "Fold" ]; then
+            python main.py -t 0 f
+          else
+            echo "Invalid device specified."
+            exit 1
+          fi
 
     - name: Unzip payload.bin
       run: |
@@ -63,16 +90,15 @@ jobs:
         python main.py -i
         rm payload.bin
     
-    - name: Unzip files
+    - name: Unzip file
       run: |
         ./extract.erofs -i system.img -x -T8
         rm *.img
-    
 
     - name: Remove exclude apk
       run: |
         python main.py -a
-          
+
     - name: Get version
       run: |
         python main.py -n
@@ -85,36 +111,36 @@ jobs:
       run: |
         python main.py -m
 
-    - name: Upload app_version.json and app_code.json
+    - name: Upload json
       uses: actions/upload-artifact@v4
       with:
-        name: update_json
+        name: Update_json
         path: |
           app_version.json
           app_code.json
     
-    - name: Upload update_apks
+    - name: Upload update_apk
       uses: actions/upload-artifact@v4
       with:
-        name: update_apks
+        name: Update_apk
         path: |
           update_apk
           update_name_apk
 
-    - name: Update
+    - name: Update database
       run: |
         python main.py -t 1 ph
             git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
             git config --global user.name "${GITHUB_ACTOR}"
-        if [ "${{ github.event.inputs.device }}" = "ph" ]; then
+        if [ "${{ github.event.inputs.device }}" = "Phone" ]; then
             git add phone/
-          elif [ "${{ github.event.inputs.device }}" = "p" ]; then
+          elif [ "${{ github.event.inputs.device }}" = "Pad" ]; then
             git add pad/
-          elif [ "${{ github.event.inputs.device }}" = "f" ]; then
+          elif [ "${{ github.event.inputs.device }}" = "Fold" ]; then
             git add fold/
           else
-            echo "Invalid device specified."
+            echo "Unknown device type."
             exit 1
           fi
-          git commit -m "Update Version ${{ github.event.inputs.devicename }} ${{ github.event.inputs.osversion }}"
-          git push origin main
+        git commit -m "Upload Database ${{ github.event.inputs.devicename }} ${{ github.event.inputs.osversion }}"
+        git push origin main
