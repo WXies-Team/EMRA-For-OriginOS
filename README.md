@@ -1,6 +1,6 @@
 # EMRA For OriginOS
 
-用于提取、修改和重命名 RedMagicOS 中的 APK 文件的 Python 脚本。它可以帮助开发者和用户轻松地获取 APK 文件及比对更新，并根据需要对其进行定制。
+用于提取、修改和重命名 OriginOS 中的 APK 文件的 Python 脚本。它可以帮助开发者和用户轻松地获取 APK 文件及比对更新，并根据需要对其进行定制。
 
 ## 功能
 
