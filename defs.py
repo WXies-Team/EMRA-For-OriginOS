@@ -242,12 +242,12 @@ def remove_some_apk(exclude_apk):
 
 
 def rename_apk(apk_files):
-    # 遍历每个apk文件
+    # 遍历每个 apk 文件
     for apk_file in apk_files:
         apk_path = os.path.join(output_dir, apk_file)
 
         try:
-            # 使用pyaxmlparser库读取apk包信息
+            # 使用 pyaxmlparser 库读取apk包信息
             apk = APK(apk_path)
 
             # 获取apk的包名，版本号，version code
@@ -258,10 +258,10 @@ def rename_apk(apk_files):
             # 构建新文件名
             new_name = f"{package_name}^{version_name}^{version_code}.apk"
 
-            # 关闭apk文件
+            # 关闭 apk 文件
             apk.zip.close()
 
-            # 重命名apk文件
+            # 重命名 apk 文件
             if not os.path.exists(os.path.join(output_dir, new_name)):
                 os.rename(apk_path, os.path.join(output_dir, new_name))
         except Exception as e:
@@ -426,7 +426,7 @@ def delete_files_and_folders():
 def git_push():
     device_name = input("机型：")
     os_version = input("版本号：")
-    commit_text = "Update Database"
+    commit_text = "Database：Update"
     commit = f"{commit_text} {device_name} {os_version}"
     try:
         with open(JSON_V, 'r') as file:
