@@ -3,6 +3,7 @@ import shutil  # 导入shutil模块，用于复制、移动、删除文件和目
 import subprocess  # 导入subprocess模块，用于执行系统命令
 import fnmatch  # 导入fnmatch模块，用于文件名匹配
 import json  # 导入json模块，用于读写JSON格式的数据
+import platform # 导入platform模块，用于读取操作系统
 from pyaxmlparser import APK  # 导入pyaxmlparser读取apk信息
 
 def move_json(backup, type_name):
@@ -169,22 +170,28 @@ def extract_img():
     # 使用 subprocess 模块运行 shell 命令，执行 payload-dumper-go 的命令，从 payload.bin 文件中提取指定镜像文件
     # -c 参数指定最大并发数为 8，-o 指定提取后的文件输出到当前目录下
     # -p 参数指定提取指定镜像，"payload.bin" 为输入文件
-    subprocess.run(["./payload-dumper-go", "-c", "8", "-o","./", "-p", "system", "payload.bin"])
+    subprocess.run(["payload_dumper", "--partitions", "system", "payload.bin", "--out", "./", "--workers", "8"])
 
 
 def extract_files():
     try:
+        os_type = platform.system()
+        if os_type == "Windows":
+            option = "-T16"
+        else:
+            option = "-T8"
         # 使用 subprocess 模块运行 shell 命令，提取镜像文件中的文件
         output = subprocess.check_output(["file", "system.img"]).decode("utf-8")
         print("当前镜像打包格式:", output)
         if "EROFS filesystem" in output:
             # 如果输出内容包含 EROFS filesystem 则使用 extract.erofs 解压
             # -i 参数指定输入的镜像文件为，-x 参数指定提取文件，-T 参数指定使用线程提取文件
-            subprocess.run(["./extract.erofs", "-i", "system.img", "-x", "-T16"])
+            subprocess.run(["./extract.erofs", "-i", "system.img", "-x", option])
         elif "data" in output:
             # 如果输出内容包含 data 则使用7zip解压
             # x 参数指定输入的镜像文件为，-o 提取指定提取文件到目录下
             subprocess.run(["7z", "x", "system.img", r"-o.\system"])
+    
         else:
             print("未知的文件系统类型")
     except subprocess.CalledProcessError as e:
