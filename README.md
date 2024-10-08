@@ -13,7 +13,6 @@
 - 更新 APK 版本
 - 更新 APK 文件名
 - 删除多余文件
-- 获取包信息
 
 ## 如何使用
 
@@ -23,16 +22,19 @@
    git clone https://github.com/WXies-Team/EMRA-For-OriginOS.git
    ```
 
-2. 确保已安装 Python 3.x, aria2c, 7zip 并安装依赖库：
+2. 确保已安装 Python 3.x, aria2c, 7z 并配置好环境变量后(具体方法可百度 Windows/Linux/macOS 如何安装 xxx 并配置环境变量)安装以下依赖库：
 
    ```
    pip install -r requirements.txt
    ```
 
-3. 运行脚本：
+   注意：Windows 用户还需安装 cygwin 并在安装后将 `安装目录/bin` 添加到环境变量中
 
+3. 下载并解压 [extract.erofs](https://github.com/sekaiacg/erofs-utils/releases)，并将文件移动到脚本目录下
+
+4. 运行脚本：
    ```
-   python main.py [-h] [-d URL] [-p] [-i] [-f] [-t] [-a] [-n] [-u] [-m] [-c] [-g] [-o]
+   python main.py [-h] [-d URL] [-p] [-i] [-f] [-t] [-a] [-n] [-u] [-m] [-c] [-g]
    ```
 
 按照提示选择相应的操作。
@@ -51,8 +53,7 @@
     -u, --update-version  更新 APK 版本
     -m, --update-name     更新 APK 名称
     -c, --clean           删除不需要的文件和文件夹
-    -g, --git-push        上传数据库到仓库
-    -o, --get-info        获取包信息
+    -g, --git_push        上传数据库到仓库
 ```
 
 ## 相关项目

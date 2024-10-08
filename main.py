@@ -12,9 +12,9 @@ def parse_arguments():
     parser.add_argument('-p', '--extract-payload', action='store_true',
                         help='Extract payload.bin from zip files')
     parser.add_argument('-i', '--img', action='store_true',
-                        help='Extract img from payload.bin')
+                        help='Extract product.img from payload.bin')
     parser.add_argument('-f', '--files', action='store_true',
-                        help='Extract files from img')
+                        help='Extract files from EROFS product.img')
     parser.add_argument('-t', '--devicetype', nargs=2, metavar=('Int', 'String'),
                         help='Change the dictionary type (two parameters in total), 0/1 => no backup/backup, ph/f/p => phone/fold/tablet')
     parser.add_argument('-a', '--apk', action='store_true',
@@ -27,11 +27,8 @@ def parse_arguments():
                         action='store_true', help='Update APK names')
     parser.add_argument('-c', '--clean', action='store_true',
                         help='Delete unnecessary files and folders')
-    parser.add_argument('-g', '--git-push', action='store_true',
+    parser.add_argument('-g', '--git_push', action='store_true',
                         help='Upload Datebase to GitHub repository')
-    parser.add_argument('-o', '--get-info', action='store_true',
-                        help='Get info from files')
-
 
     return parser.parse_args()
 
@@ -64,8 +61,6 @@ def main():
         delete_files_and_folders()
     if args.git_push:
         git_push()
-    if args.get_info:
-        get_info()
 
 
 if __name__ == "__main__":  # 如果这个脚本文件是被直接运行的
