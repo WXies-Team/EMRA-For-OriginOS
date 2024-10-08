@@ -27,8 +27,11 @@ def parse_arguments():
                         action='store_true', help='Update APK names')
     parser.add_argument('-c', '--clean', action='store_true',
                         help='Delete unnecessary files and folders')
-    parser.add_argument('-g', '--git_push', action='store_true',
+    parser.add_argument('-g', '--git-push', action='store_true',
                         help='Upload Datebase to GitHub repository')
+    parser.add_argument('-o', '--get-info', action='store_true',
+                        help='Get info from files')
+
 
     return parser.parse_args()
 
@@ -61,6 +64,8 @@ def main():
         delete_files_and_folders()
     if args.git_push:
         git_push()
+    if args.get_info:
+        get_info()
 
 
 if __name__ == "__main__":  # 如果这个脚本文件是被直接运行的

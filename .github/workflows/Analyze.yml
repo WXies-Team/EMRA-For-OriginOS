@@ -40,26 +40,10 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Download payload-dumper-go
-      uses: robinraju/release-downloader@v1.10
-      with:
-        repository: "ssut/payload-dumper-go"
-        latest: true
-        extract: true
-        fileName: "payload-dumper-go_*_linux_amd64.tar.gz"
-
-    - name: Download extract.erofs
-      uses: robinraju/release-downloader@v1.10
-      with:
-        repository: "sekaiacg/erofs-utils"
-        latest: true
-        extract: true
-        fileName: "erofs-utils-*-Linux_x86_64-*.zip"
-
     - name: Set permission
       run: |
-       chmod +x extract.erofs
-       rm *.tar.gz *.zip
+       chmod +x ./tools/Linux/x86_64/extract.erofs
+       chmod +x ./tools/Linux/x86_64/payload-dumper-go
 
     - name: Download ROM
       run: |
@@ -90,8 +74,7 @@ jobs:
     
     - name: Unzip file
       run: |
-        ./extract.erofs -i system.img -x -T8
-        rm *.img
+        python main.py -f
 
     - name: Remove exclude apk
       run: |
@@ -116,6 +99,13 @@ jobs:
         path: |
           app_version.json
           app_code.json
+
+    - name: Upload build.prop
+      uses: actions/upload-artifact@v4
+      with:
+        name: build.prop
+        path: |
+          system/etc/build.prop
     
     - name: Upload update apk
       uses: actions/upload-artifact@v4
@@ -148,3 +138,8 @@ jobs:
           else
             exit 0
           fi
+          
+    - name: Get Info
+      continue-on-error: true
+      run: |
+        python main.py -o
