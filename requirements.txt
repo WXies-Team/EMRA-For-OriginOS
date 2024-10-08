@@ -1,3 +1,1 @@
 pyaxmlparser
-magic; sys_platform == 'linux'
-python-magic-bin; sys_platform == 'win32'

@@ -3,7 +3,6 @@ import shutil  # 导入 shutil 模块，用于复制、移动、删除文件和�
 import subprocess  # 导入 subprocess 模块，用于执行系统命令
 import fnmatch  # 导入 fnmatch 模块，用于文件名匹配
 import json  # 导入 json 模块，用于读写 JSON 格式的数据
-import magic # 导入 magic 模块，用于读取 img 格式
 from pyaxmlparser import APK  # 导入 pyaxmlparser 读取apk 信息
 
 def move_json(backup, type_name):
@@ -175,18 +174,8 @@ def extract_img():
 
 def extract_files():
     try:
-        # 使用 subprocess 模块运行 shell 命令，提取镜像文件中的文件
-        output = magic.from_file("system.img")
-        print("当前镜像打包格式:", output)
-
-        if "EROFS filesystem" in output:
-            # 如果输出内容包含 EROFS filesystem 则使用 extract.erofs 解压
-            # -i 参数指定输入的镜像文件为，-x 参数指定提取文件，-T 参数指定使用线程提取文件
-            subprocess.run([tools_path + "extract.erofs", "-i", image + ".img", "-x", "-T8"])
-        elif "data" in output:
-            # 如果输出内容包含 data 则使用7zip解压
-            # x 参数指定输入的镜像文件为，-o 提取指定提取文件到目录下
-            subprocess.run(["7z", "x", image + ".img", r"-o.\system"])
+        # 提取镜像文件中的文件
+        subprocess.run([tools_path + "extract.erofs", "-i", image + ".img", "-x", "-T8"])
         
         # 搜索当前目录及其子目录中的 build.prop 文件 
         with open(build_prop_path, "r") as file:
@@ -200,7 +189,7 @@ def extract_files():
                     elif device_name in is_pad:
                         print("\n检测到包设备为 Pad，请输入-t 0/1(不备份/备份) p 参数切换字库")
                     elif device_name in is_flip:
-                        print("\n检测到包设备为 flip，请输入-t 0/1(不备份/备份) fp 参数切换字库")
+                        print("\n检测到包设备为 Flip，请输入-t 0/1(不备份/备份) fp 参数切换字库")
                     else:
                         print("\n检测到包设备为 Phone，请输入-t 0/1(不备份/备份) ph 参数切换字库")
                     break  # 找到后退出循环
